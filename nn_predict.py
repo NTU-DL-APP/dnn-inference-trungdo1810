@@ -7,8 +7,6 @@ def relu(x):
 
 def softmax(x):
     e = np.exp(x - np.max(x, axis=-1, keepdims=True))
-    print("Softmax input:", x)
-    print("Softmax exp input:", e)
     return e / np.sum(e, axis=-1, keepdims=True)
 
 # === Flatten ===
@@ -40,10 +38,10 @@ def nn_forward_h5(model_arch, weights, data):
             elif cfg.get("activation") == "softmax":
                 x = softmax(x)
 
-    return x
-
+    # return x
+    return np.argmax(x, axis=-1)
 
 # You are free to replace nn_forward_h5() with your own implementation 
 def nn_inference(model_arch, weights, data):
     return nn_forward_h5(model_arch, weights, data)
-    
+
