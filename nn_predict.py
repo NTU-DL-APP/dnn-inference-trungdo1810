@@ -20,8 +20,19 @@ def dense(x, W, b):
 # Infer TensorFlow h5 model using numpy
 # Support only Dense, Flatten, relu, softmax now
 def nn_forward_h5(model_arch, weights, data):
+    # Support both list of layers or dict with 'config'->'layers'
+    if isinstance(model_arch, dict):
+        if "config" in model_arch and "layers" in model_arch["config"]:
+            layers = model_arch["config"]["layers"]
+        elif "layers" in model_arch:
+            layers = model_arch["layers"]
+        else:
+            raise ValueError("Cannot find layers in model_arch dict")
+    else:
+        layers = model_arch
+
     x = data
-    for layer in model_arch:
+    for layer in layers:
         lname = layer['name']
         ltype = layer['type']
         cfg = layer['config']
@@ -38,8 +49,7 @@ def nn_forward_h5(model_arch, weights, data):
             elif cfg.get("activation") == "softmax":
                 x = softmax(x)
 
-    # return x
-    return np.argmax(x, axis=-1)
+    return x
 
 # You are free to replace nn_forward_h5() with your own implementation 
 def nn_inference(model_arch, weights, data):
